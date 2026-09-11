@@ -1,0 +1,44 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Cai Gradle 8.9 truc tiep tren runner, khong can gradlew trong repo
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
+
+      # Debug truoc: build nhanh, khong qua R8, loi bien dich that su lo ra o day
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      # Release: nho hon nhieu, da ky bang debug key nen cai thang duoc
+      - name: Build release APK
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Report APK sizes
+        if: always()
+        run: find app/build/outputs/apk -name "*.apk" -exec ls -lh {} \; || true
+
+      - name: Upload APKs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TravelNote-apk
+          path: app/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
