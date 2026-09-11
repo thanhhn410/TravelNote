@@ -80,7 +80,7 @@ fun SettingsScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            Switch(checked = vm.dynamicColor, onCheckedChange = { vm.setDynamicColor(it) })
+                            Switch(checked = vm.dynamicColor, onCheckedChange = { vm.updateDynamicColor(it) })
                         }
                     }
                 }
