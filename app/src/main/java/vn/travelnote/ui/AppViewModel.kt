@@ -64,7 +64,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         prefs.edit().putString("theme", mode.name).apply()
     }
 
-    fun setDynamicColor(on: Boolean) {
+    fun updateDynamicColor(on: Boolean) {
         dynamicColor = on
         prefs.edit().putBoolean("dynamic", on).apply()
     }
